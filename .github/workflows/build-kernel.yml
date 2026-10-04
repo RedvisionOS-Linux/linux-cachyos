@@ -34,7 +34,7 @@ jobs:
       - name: Compile Optimized Kernel (ZSTD)
         run: |
           sudo sed -i 's/BUILDENV=(.*)/BUILDENV=(!distcc !color !ccache check !sign)/g' /etc/makepkg.conf
-          sudo -u builder makepkg -s --noconfirm
+          sudo -u builder makepkg -s --noconfirm --nosign
 
       - name: Upload Compiled Packages to GitHub Releases
         uses: softprops/action-gh-release@v2
