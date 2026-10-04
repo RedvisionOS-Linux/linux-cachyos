@@ -33,7 +33,14 @@ jobs:
 
       - name: Compile Optimized Kernel (ZSTD)
         run: |
+          # 1. Принудительно отключаем подписи пакетов в pacman.conf хоста (SigLevel = Never)
+          sudo sed -i 's/^SigLevel.*/SigLevel = Never/g' /etc/pacman.conf
+          sudo sed -i 's/^LocalFileSigLevel.*/LocalFileSigLevel = Never/g' /etc/pacman.conf
+          
+          # 2. Отключаем принудительное требование GPG-подписи в конфигурации сборщика makepkg.conf
           sudo sed -i 's/BUILDENV=(.*)/BUILDENV=(!distcc !color !ccache check !sign)/g' /etc/makepkg.conf
+          
+          # 3. Запускаем сборку от имени пользователя builder без подписи
           sudo -u builder makepkg -s --noconfirm --nosign
 
       - name: Upload Compiled Packages to GitHub Releases
