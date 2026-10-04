@@ -17,24 +17,22 @@ jobs:
 
       - name: Setup CachyOS Repositories & Keys
         run: |
-          curl https://cachyos.org -o cachyos-repo.tar.xz
+          curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
           tar xvf cachyos-repo.tar.xz
           cd cachyos-repo
-          ./cachyos-repo.sh --uninstall # Настраиваем репозитории хоста без обновления всей системы
+          sudo ./cachyos-repo.sh
 
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
       - name: Configure Makepkg Permissions
         run: |
-          # В Arch Linux нельзя собирать пакеты под root, создаем пользователя builder
           useradd -m builder
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
           chown -R builder:builder .
 
       - name: Compile Optimized Kernel (ZSTD)
         run: |
-          # Запускаем сборку от имени пользователя builder
           sudo -u builder makepkg -s --noconfirm
 
       - name: Upload Compiled Packages to GitHub Releases
